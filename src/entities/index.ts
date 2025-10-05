@@ -1,10 +1,9 @@
-export { Organization } from './organization.entity';
 export { Sucursal } from './sucursal.entity';
 export { User } from './user.entity';
 export { Role } from './role.entity';
 export { Permission } from './permission.entity';
 export { RolePermission } from './role-permission.entity';
-export { UserOrganization } from './user-organization.entity';
+export { UserSucursal } from './user-sucursal.entity';
 export { RefreshToken } from './refresh-token.entity';
 export { AuditLog, AuditAction } from './audit-log.entity';
 export { UserStatus } from './user.entity';

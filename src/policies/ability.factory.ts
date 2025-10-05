@@ -13,22 +13,22 @@ export enum Action {
 
 export type Subjects =
 	| 'User'
-	| 'Organization'
-	| 'Branch'
+	| 'Sucursal'
 	| 'Role'
 	| 'Permission'
 	| 'Order'
 	| 'Invoice'
 	| 'Report'
+	| 'Cuenta'
 	| 'all';
 
 export type AppAbility = Ability<[Action, Subjects]>;
 
 export interface AbilityContext {
 	userId: string;
-	organizationId: string;
-	branchId?: string;
-	roles: string[];
+	sucursalId?: string;
+	role: string;
+	sucursales: string[];
 	permissions: string[];
 }
 
@@ -40,26 +40,29 @@ export class AbilityFactory {
 		);
 
 		// Permisos basados en roles (RBAC)
-		if (context.roles.includes('ADMIN')) {
+		if (context.role === 'ADMIN') {
 			can(Action.MANAGE, 'all');
-		} else if (context.roles.includes('MANAGER')) {
-			can(Action.MANAGE, 'Organization');
-			can(Action.MANAGE, 'Branch');
+		} else if (context.role === 'MANAGER') {
+			can(Action.MANAGE, 'Sucursal');
 			can(Action.MANAGE, 'User');
 			can(Action.READ, 'Report');
 			can(Action.MANAGE, 'Order');
 			can(Action.MANAGE, 'Invoice');
-		} else if (context.roles.includes('SELLER')) {
+			can(Action.MANAGE, 'Cuenta');
+		} else if (context.role === 'SELLER') {
 			can(Action.READ, 'User');
 			can(Action.UPDATE, 'User');
 			can(Action.CREATE, 'Order');
 			can(Action.READ, 'Order');
 			can(Action.UPDATE, 'Order');
 			can(Action.READ, 'Invoice');
-		} else if (context.roles.includes('VIEWER')) {
+			can(Action.READ, 'Cuenta');
+			can(Action.CREATE, 'Cuenta');
+		} else if (context.role === 'VIEWER') {
 			can(Action.READ, 'User');
 			can(Action.READ, 'Order');
 			can(Action.READ, 'Invoice');
+			can(Action.READ, 'Cuenta');
 		}
 
 		return build({

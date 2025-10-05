@@ -8,12 +8,11 @@ import {
 	JoinColumn,
 } from 'typeorm';
 import { User } from './user.entity';
-import { Organization } from './organization.entity';
 import { Sucursal } from './sucursal.entity';
 import { Role } from './role.entity';
 
-@Entity('user_organizations')
-export class UserOrganization {
+@Entity('user_sucursales')
+export class UserSucursal {
 	@PrimaryGeneratedColumn()
 	id: number;
 
@@ -21,9 +20,6 @@ export class UserOrganization {
 	userId: number;
 
 	@Column({ type: 'integer', nullable: false })
-	organizationId: number;
-
-	@Column({ type: 'integer', nullable: true })
 	sucursalId: number;
 
 	@Column({ type: 'integer', nullable: false })
@@ -42,10 +38,6 @@ export class UserOrganization {
 	@ManyToOne(() => User)
 	@JoinColumn({ name: 'userId' })
 	user: User;
-
-	@ManyToOne(() => Organization)
-	@JoinColumn({ name: 'organizationId' })
-	organization: Organization;
 
 	@ManyToOne(() => Sucursal)
 	@JoinColumn({ name: 'sucursalId' })

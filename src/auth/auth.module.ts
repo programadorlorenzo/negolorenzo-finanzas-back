@@ -5,12 +5,11 @@ import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import {
 	User,
-	Organization,
 	Sucursal,
 	Role,
 	Permission,
 	RolePermission,
-	UserOrganization,
+	UserSucursal,
 	RefreshToken,
 } from '../entities';
 import { AuthController } from './auth.controller';
@@ -23,8 +22,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 		TypeOrmModule.forFeature([
 			User,
 			RefreshToken,
-			UserOrganization,
-			Organization,
+			UserSucursal,
 			Sucursal,
 			Role,
 			Permission,

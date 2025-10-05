@@ -4,11 +4,8 @@ import {
 	Column,
 	CreateDateColumn,
 	UpdateDateColumn,
-	ManyToOne,
-	JoinColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { Organization } from './organization.entity';
 
 @Entity('sucursales')
 export class Sucursal {
@@ -32,10 +29,6 @@ export class Sucursal {
 	@Column({ type: 'varchar', length: 20, nullable: true })
 	phone: string;
 
-	@ApiProperty({ description: 'ID de la organización', required: false })
-	@Column({ type: 'integer', nullable: true })
-	organizationId: number;
-
 	@ApiProperty({ description: 'Estado activo de la sucursal', required: false })
 	@Column({ type: 'boolean', default: true, nullable: true })
 	isActive: boolean;
@@ -47,9 +40,4 @@ export class Sucursal {
 	@ApiProperty({ description: 'Fecha de actualización', required: false })
 	@UpdateDateColumn({ type: 'timestamp with time zone' })
 	updatedAt: Date;
-
-	// Relaciones
-	@ManyToOne(() => Organization, organization => organization.sucursales)
-	@JoinColumn({ name: 'organizationId' })
-	organization: Organization;
 }

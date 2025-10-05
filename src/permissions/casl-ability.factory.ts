@@ -16,12 +16,12 @@ export class CaslAbilityFactory {
 		);
 
 		// Permisos basados en roles (RBAC)
-		if (user.roles?.includes('SUPERADMIN')) {
+		if (user.role === 'SUPERADMIN') {
 			can(Action.Manage, 'all');
-		} else if (user.roles?.includes('ADMIN')) {
+		} else if (user.role === 'ADMIN') {
 			can(Action.Manage, 'Cuenta');
 			can(Action.Manage, 'User');
-		} else if (user.roles?.includes('MANAGER')) {
+		} else if (user.role === 'MANAGER') {
 			can(Action.Read, 'Cuenta');
 			can(Action.Update, 'Cuenta');
 			can(Action.Create, 'Cuenta');
@@ -37,7 +37,7 @@ export class CaslAbilityFactory {
 		can([Action.Read, Action.Update], 'Cuenta', { createdBy: user.id });
 
 		// Solo administradores pueden eliminar cuentas
-		if (user.roles?.includes('ADMIN') || user.roles?.includes('SUPERADMIN')) {
+		if (user.role === 'ADMIN' || user.role === 'SUPERADMIN') {
 			can(Action.Delete, 'Cuenta');
 		}
 

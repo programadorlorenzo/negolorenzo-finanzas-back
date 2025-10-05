@@ -33,6 +33,18 @@ export class User {
 	@Column({ type: 'varchar', length: 255, nullable: false })
 	password: string;
 
+	@ApiProperty({ description: 'Rol del usuario', required: false })
+	@Column({ type: 'varchar', length: 50, nullable: true })
+	role: string;
+
+	@ApiProperty({ description: 'Sucursales asignadas al usuario (JSON)', required: false })
+	@Column({ type: 'json', nullable: true })
+	sucursales: string[];
+
+	@ApiProperty({ description: 'Permisos del usuario (JSON)', required: false })
+	@Column({ type: 'json', nullable: true })
+	permissions: string[];
+
 	@ApiProperty({ description: 'Estado del usuario', enum: UserStatus, required: false })
 	@Column({
 		type: 'enum',

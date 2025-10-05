@@ -3,12 +3,11 @@ import { ConfigService } from '@nestjs/config';
 import { config } from 'dotenv';
 import {
 	User,
-	Organization,
 	Sucursal,
 	Role,
 	Permission,
 	RolePermission,
-	UserOrganization,
+	UserSucursal,
 	RefreshToken,
 	AuditLog,
 	Cuenta,
@@ -28,12 +27,11 @@ export const AppDataSource = new DataSource({
 	database: configService.get<string>('DATABASE_NAME', 'negofinanzas'),
 	entities: [
 		User,
-		Organization,
 		Sucursal,
 		Role,
 		Permission,
 		RolePermission,
-		UserOrganization,
+		UserSucursal,
 		RefreshToken,
 		AuditLog,
 		Cuenta,

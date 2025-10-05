@@ -1,9 +1,8 @@
 export interface JwtPayload {
 	sub: number; // User ID
 	email: string;
-	orgId: number;
-	sucursalId?: number;
-	roles: string[];
+	role: string;
+	sucursales: string[];
 	permissions: string[];
 	iat?: number;
 	exp?: number;
@@ -22,17 +21,8 @@ export interface UserResponse {
 	email: string;
 	phone?: string;
 	status: string;
-	organizations: UserOrganizationResponse[];
-}
-
-export interface UserOrganizationResponse {
-	id: number;
-	organizationId: number;
-	organizationName: string;
-	sucursalId?: number;
-	sucursalName?: string;
-	roleId: number;
-	roleName: string;
+	role: string;
+	sucursales: string[];
 	permissions: string[];
 }
 

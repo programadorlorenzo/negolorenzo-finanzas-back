@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength, IsOptional } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, MinLength, IsOptional, IsArray } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class RegisterDto {
@@ -26,18 +26,29 @@ export class RegisterDto {
 	password: string;
 
 	@ApiProperty({
-		description: 'ID de la organización',
-		example: 1,
+		description: 'Rol del usuario',
+		example: 'Manager',
 		required: false,
 	})
 	@IsOptional()
-	organizationId?: number;
+	@IsString()
+	role?: string;
 
-	@ApiProperty({ description: 'ID de la sucursal', example: 1, required: false })
+	@ApiProperty({ 
+		description: 'Sucursales asignadas al usuario', 
+		example: ['Sucursal Central', 'Sucursal Norte'], 
+		required: false 
+	})
 	@IsOptional()
-	sucursalId?: number;
+	@IsArray()
+	sucursales?: string[];
 
-	@ApiProperty({ description: 'ID del rol', example: 1, required: false })
+	@ApiProperty({ 
+		description: 'Permisos del usuario', 
+		example: ['read', 'create', 'update'], 
+		required: false 
+	})
 	@IsOptional()
-	roleId?: number;
+	@IsArray()
+	permissions?: string[];
 }

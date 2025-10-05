@@ -1,9 +1,8 @@
 export interface AuthenticatedUser {
 	id: number;
 	email: string;
-	orgId: number;
-	sucursalId?: number;
-	roles: string[];
+	role: string;
+	sucursales: string[];
 	permissions: string[];
 }
 

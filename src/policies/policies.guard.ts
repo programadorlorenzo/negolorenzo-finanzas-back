@@ -40,11 +40,11 @@ export class PoliciesGuard implements CanActivate {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
 			userId: user.id,
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-			organizationId: user.orgId,
+			sucursalId: user.sucursalId,
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-			branchId: user.branchId,
+			role: user.role || '',
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-			roles: user.roles || [],
+			sucursales: user.sucursales || [],
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
 			permissions: user.permissions || [],
 		};

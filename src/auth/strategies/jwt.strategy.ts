@@ -22,9 +22,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 		const user = await this.authService.validateUser(payload);
 		return {
 			...user,
-			orgId: payload.orgId,
-			sucursalId: payload.sucursalId,
-			roles: payload.roles,
+			role: payload.role,
+			sucursales: payload.sucursales,
 			permissions: payload.permissions,
 		};
 	}
