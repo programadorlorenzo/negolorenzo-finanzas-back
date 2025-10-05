@@ -257,6 +257,36 @@ export class AuthService {
 			relations: ['organization', 'sucursal', 'role'],
 		});
 
+		if (userOrgs.length === 0) {
+			return [];
+		}
+
+		// Verificar si el usuario tiene rol SUPERADMIN o ADMIN
+		const userRole = userOrgs[0].role.name;
+		const isSuperAdminOrAdmin = userRole === 'SUPERADMIN' || userRole === 'ADMIN';
+
+		if (isSuperAdminOrAdmin) {
+			// Para SUPERADMIN y ADMIN, obtener todas las sucursales de la organización
+			const organizationId = userOrgs[0].organizationId;
+			const allSucursales = await this.sucursalRepository.find({
+				where: { organizationId, isActive: true },
+				relations: ['organization'],
+			});
+
+			// Crear una respuesta con acceso a todas las sucursales
+			return allSucursales.map(sucursal => ({
+				id: userOrgs[0].id, // Usar el ID de la relación usuario-organización original
+				organizationId: sucursal.organizationId,
+				organizationName: sucursal.organization.name,
+				sucursalId: sucursal.id,
+				sucursalName: sucursal.name,
+				roleId: userOrgs[0].roleId,
+				roleName: userOrgs[0].role.name,
+				permissions: [], // Se llenará después
+			}));
+		}
+
+		// Para MANAGER y otros roles, solo mostrar las sucursales asignadas
 		return userOrgs.map(userOrg => ({
 			id: userOrg.id,
 			organizationId: userOrg.organizationId,
