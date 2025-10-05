@@ -54,10 +54,30 @@ export class SeedService {
 		this.logger.log('📋 Seeding permissions...');
 
 		const permissions = [
-			{ name: 'manage_users', description: 'Gestionar usuarios' },
-			{ name: 'manage_accounts', description: 'Gestionar cuentas' },
-			{ name: 'view_reports', description: 'Ver reportes' },
-			{ name: 'manage_branches', description: 'Gestionar sucursales' },
+			{
+				name: 'manage_users',
+				resource: 'users',
+				action: 'manage',
+				description: 'Gestionar usuarios',
+			},
+			{
+				name: 'manage_accounts',
+				resource: 'accounts',
+				action: 'manage',
+				description: 'Gestionar cuentas',
+			},
+			{
+				name: 'view_reports',
+				resource: 'reports',
+				action: 'view',
+				description: 'Ver reportes',
+			},
+			{
+				name: 'manage_branches',
+				resource: 'branches',
+				action: 'manage',
+				description: 'Gestionar sucursales',
+			},
 		];
 
 		for (const permissionData of permissions) {
