@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as argon2 from 'argon2';
 import {
 	Sucursal,
 	Role,
@@ -11,6 +12,7 @@ import {
 	Cuenta,
 	TipoCuenta,
 	Moneda,
+	UserStatus,
 } from '../../entities';
 
 @Injectable()
@@ -41,6 +43,8 @@ export class SeedService {
 			await this.seedPermissions();
 			await this.seedRoles();
 			await this.seedRolePermissions();
+			await this.seedSucursales();
+			await this.seedUsers();
 			await this.seedCuentas();
 
 			this.logger.log('✅ Database seeding completed successfully!');
@@ -190,6 +194,91 @@ export class SeedService {
 				this.logger.log(`   ✓ Cuenta created: ${cuentaData.titular}`);
 			} else {
 				this.logger.log(`   → Cuenta already exists: ${cuentaData.titular}`);
+			}
+		}
+	}
+
+	private async seedSucursales(): Promise<void> {
+		this.logger.log('🏢 Seeding sucursales...');
+
+		const sucursales = [
+			{
+				name: 'Central',
+				address: 'Av. Principal 123, Centro',
+				isActive: true,
+			},
+			{
+				name: 'Norte',
+				address: 'Calle Norte 456, Zona Norte',
+				isActive: true,
+			},
+		];
+
+		for (const sucursalData of sucursales) {
+			const existingSucursal = await this.sucursalRepository.findOne({
+				where: { name: sucursalData.name },
+			});
+
+			if (!existingSucursal) {
+				const sucursal = this.sucursalRepository.create(sucursalData);
+				await this.sucursalRepository.save(sucursal);
+				this.logger.log(`   ✓ Sucursal created: ${sucursalData.name}`);
+			} else {
+				this.logger.log(`   → Sucursal already exists: ${sucursalData.name}`);
+			}
+		}
+	}
+
+	private async seedUsers(): Promise<void> {
+		this.logger.log('👤 Seeding users...');
+
+		// Hash de contraseña por defecto
+		const defaultPassword = await argon2.hash('password123');
+
+		const users = [
+			{
+				email: 'admin@finanzas.com',
+				firstName: 'Super',
+				lastName: 'Admin',
+				password: defaultPassword,
+				role: 'SUPERADMIN',
+				sucursales: ['Central', 'Norte'],
+				permissions: ['manage_users', 'manage_accounts', 'view_reports', 'manage_branches'],
+				status: UserStatus.ACTIVE,
+			},
+			{
+				email: 'manager@finanzas.com',
+				firstName: 'Manager',
+				lastName: 'Principal',
+				password: defaultPassword,
+				role: 'MANAGER',
+				sucursales: ['Central'],
+				permissions: ['manage_accounts', 'view_reports'],
+				status: UserStatus.ACTIVE,
+			},
+		];
+
+		for (const userData of users) {
+			const existingUser = await this.userRepository.findOne({
+				where: { email: userData.email },
+			});
+
+			if (!existingUser) {
+				const user = this.userRepository.create({
+					email: userData.email,
+					firstName: userData.firstName,
+					lastName: userData.lastName,
+					password: userData.password,
+					role: userData.role,
+					sucursales: userData.sucursales,
+					permissions: userData.permissions,
+					status: userData.status,
+				});
+
+				await this.userRepository.save(user);
+				this.logger.log(`   ✓ User created: ${userData.email}`);
+			} else {
+				this.logger.log(`   → User already exists: ${userData.email}`);
 			}
 		}
 	}
