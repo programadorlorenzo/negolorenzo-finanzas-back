@@ -238,8 +238,8 @@ export class SeedService {
 		const users = [
 			{
 				email: 'admin@finanzas.com',
-				firstName: 'Super',
-				lastName: 'Admin',
+				firstName: 'Walter',
+				lastName: 'Felipers',
 				password: defaultPassword,
 				role: 'SUPERADMIN',
 				sucursales: ['Central', 'Norte'],
