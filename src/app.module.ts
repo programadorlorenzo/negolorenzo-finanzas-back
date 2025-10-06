@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { CuentasModule } from './cuentas/cuentas.module';
+import { SucursalesModule } from './sucursales/sucursales.module';
 import * as entities from './entities';
 
 @Module({
@@ -50,6 +51,7 @@ import * as entities from './entities';
 		}),
 		AuthModule,
 		CuentasModule,
+		SucursalesModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

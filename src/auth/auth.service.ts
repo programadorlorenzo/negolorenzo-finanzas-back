@@ -10,11 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as argon2 from 'argon2';
-import {
-	User,
-	RefreshToken,
-	UserStatus,
-} from '../entities';
+import { User, RefreshToken, UserStatus } from '../entities';
 import { RegisterDto, LoginDto, RefreshTokenDto } from './dto';
 import {
 	JwtPayload,
@@ -137,8 +133,9 @@ export class AuthService {
 	}
 
 	private async generateRefreshToken(userId: number): Promise<string> {
-		const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-		
+		const token =
+			Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
 		const refreshToken = this.refreshTokenRepository.create({
 			userId,
 			token,

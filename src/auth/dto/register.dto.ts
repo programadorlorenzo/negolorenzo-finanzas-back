@@ -34,19 +34,19 @@ export class RegisterDto {
 	@IsString()
 	role?: string;
 
-	@ApiProperty({ 
-		description: 'Sucursales asignadas al usuario', 
-		example: ['Sucursal Central', 'Sucursal Norte'], 
-		required: false 
+	@ApiProperty({
+		description: 'Sucursales asignadas al usuario',
+		example: ['Sucursal Central', 'Sucursal Norte'],
+		required: false,
 	})
 	@IsOptional()
 	@IsArray()
 	sucursales?: string[];
 
-	@ApiProperty({ 
-		description: 'Permisos del usuario', 
-		example: ['read', 'create', 'update'], 
-		required: false 
+	@ApiProperty({
+		description: 'Permisos del usuario',
+		example: ['read', 'create', 'update'],
+		required: false,
 	})
 	@IsOptional()
 	@IsArray()
