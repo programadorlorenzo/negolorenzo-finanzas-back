@@ -44,6 +44,18 @@ export class CreatePagoDto {
 	@Type(() => Number)
 	sucursalId?: number;
 
+	@ApiPropertyOptional({ description: 'ID de la cuenta destino (opcional)' })
+	@IsOptional()
+	@IsNumber()
+	@Type(() => Number)
+	cuentaDestinoId?: number;
+
+	@ApiPropertyOptional({ description: 'ID de la cuenta propia empresa (opcional)' })
+	@IsOptional()
+	@IsNumber()
+	@Type(() => Number)
+	cuentaPropiaEmpresaId?: number;
+
 	@ApiPropertyOptional({ description: 'ID del archivo voucher' })
 	@IsOptional()
 	@IsNumber()
@@ -100,6 +112,18 @@ export class UpdatePagoDto {
 	@Type(() => Number)
 	sucursalId?: number;
 
+	@ApiPropertyOptional({ description: 'ID de la cuenta destino (opcional)' })
+	@IsOptional()
+	@IsNumber()
+	@Type(() => Number)
+	cuentaDestinoId?: number;
+
+	@ApiPropertyOptional({ description: 'ID de la cuenta propia empresa (opcional)' })
+	@IsOptional()
+	@IsNumber()
+	@Type(() => Number)
+	cuentaPropiaEmpresaId?: number;
+
 	@ApiPropertyOptional({ description: 'ID del archivo voucher' })
 	@IsOptional()
 	@IsNumber()
@@ -138,6 +162,18 @@ export class PagoFilterDto {
 	@IsNumber()
 	@Type(() => Number)
 	sucursalId?: number;
+
+	@ApiPropertyOptional({ description: 'Filtrar por cuenta destino' })
+	@IsOptional()
+	@IsNumber()
+	@Type(() => Number)
+	cuentaDestinoId?: number;
+
+	@ApiPropertyOptional({ description: 'Filtrar por cuenta propia empresa' })
+	@IsOptional()
+	@IsNumber()
+	@Type(() => Number)
+	cuentaPropiaEmpresaId?: number;
 
 	@ApiPropertyOptional({ description: 'Monto mínimo' })
 	@IsOptional()
@@ -227,6 +263,28 @@ export class PagoResponseDto {
 		id: number;
 		name: string;
 		code?: string;
+	};
+
+	@ApiPropertyOptional()
+	cuentaDestinoId?: number;
+
+	@ApiPropertyOptional()
+	cuentaDestino?: {
+		id: number;
+		nombre: string;
+		numero: string;
+		tipo: string;
+	};
+
+	@ApiPropertyOptional()
+	cuentaPropiaEmpresaId?: number;
+
+	@ApiPropertyOptional()
+	cuentaPropiaEmpresa?: {
+		id: number;
+		nombre: string;
+		numero: string;
+		tipo: string;
 	};
 
 	@ApiPropertyOptional({ type: FileResponseDto })

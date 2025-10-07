@@ -68,6 +68,10 @@ export class Cuenta {
 	@Column({ type: 'boolean', default: false, nullable: true })
 	esEmpresa: boolean;
 
+	@ApiProperty({ description: 'Indica si es cuenta propia de la empresa', required: false })
+	@Column({ type: 'boolean', default: false, nullable: true })
+	propiaEmpresa: boolean;
+
 	@ApiProperty({ description: 'Estado activo de la cuenta', required: false })
 	@Column({ type: 'boolean', default: true, nullable: true })
 	isActive: boolean;

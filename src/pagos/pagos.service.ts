@@ -44,6 +44,8 @@ export class PagosService {
 			total: createPagoDto.total,
 			moneda: createPagoDto.moneda,
 			sucursalId: createPagoDto.sucursalId,
+			cuentaDestinoId: createPagoDto.cuentaDestinoId,
+			cuentaPropiaEmpresaId: createPagoDto.cuentaPropiaEmpresaId,
 			voucherFileId: createPagoDto.voucherFileId,
 		});
 
@@ -89,7 +91,14 @@ export class PagosService {
 	async findOne(id: number): Promise<PagoResponseDto> {
 		const pago = await this.pagoRepository.findOne({
 			where: { id },
-			relations: ['sucursal', 'voucherFile', 'documentFiles', 'documentFiles.file'],
+			relations: [
+				'sucursal',
+				'cuentaDestino',
+				'cuentaPropiaEmpresa',
+				'voucherFile',
+				'documentFiles',
+				'documentFiles.file',
+			],
 		});
 
 		if (!pago) {
@@ -128,6 +137,8 @@ export class PagosService {
 			moneda: updatePagoDto.moneda ?? pago.moneda,
 			status: updatePagoDto.status ?? pago.status,
 			sucursalId: updatePagoDto.sucursalId ?? pago.sucursalId,
+			cuentaDestinoId: updatePagoDto.cuentaDestinoId ?? pago.cuentaDestinoId,
+			cuentaPropiaEmpresaId: updatePagoDto.cuentaPropiaEmpresaId ?? pago.cuentaPropiaEmpresaId,
 			voucherFileId: updatePagoDto.voucherFileId ?? pago.voucherFileId,
 		});
 
@@ -179,6 +190,8 @@ export class PagosService {
 		const queryBuilder = this.pagoRepository
 			.createQueryBuilder('pago')
 			.leftJoinAndSelect('pago.sucursal', 'sucursal')
+			.leftJoinAndSelect('pago.cuentaDestino', 'cuentaDestino')
+			.leftJoinAndSelect('pago.cuentaPropiaEmpresa', 'cuentaPropiaEmpresa')
 			.leftJoinAndSelect('pago.voucherFile', 'voucherFile')
 			.leftJoinAndSelect('pago.documentFiles', 'documentFiles')
 			.leftJoinAndSelect('documentFiles.file', 'file')
@@ -201,6 +214,18 @@ export class PagosService {
 
 		if (filters.sucursalId) {
 			queryBuilder.andWhere('pago.sucursalId = :sucursalId', { sucursalId: filters.sucursalId });
+		}
+
+		if (filters.cuentaDestinoId) {
+			queryBuilder.andWhere('pago.cuentaDestinoId = :cuentaDestinoId', {
+				cuentaDestinoId: filters.cuentaDestinoId,
+			});
+		}
+
+		if (filters.cuentaPropiaEmpresaId) {
+			queryBuilder.andWhere('pago.cuentaPropiaEmpresaId = :cuentaPropiaEmpresaId', {
+				cuentaPropiaEmpresaId: filters.cuentaPropiaEmpresaId,
+			});
 		}
 
 		if (filters.montoMin !== undefined) {
@@ -237,6 +262,24 @@ export class PagosService {
 						id: pago.sucursal.id,
 						name: pago.sucursal.name,
 						code: pago.sucursal.code,
+					}
+				: undefined,
+			cuentaDestinoId: pago.cuentaDestinoId,
+			cuentaDestino: pago.cuentaDestino
+				? {
+						id: pago.cuentaDestino.id,
+						nombre: pago.cuentaDestino.titular,
+						numero: pago.cuentaDestino.numeroCuenta,
+						tipo: pago.cuentaDestino.tipo,
+					}
+				: undefined,
+			cuentaPropiaEmpresaId: pago.cuentaPropiaEmpresaId,
+			cuentaPropiaEmpresa: pago.cuentaPropiaEmpresa
+				? {
+						id: pago.cuentaPropiaEmpresa.id,
+						nombre: pago.cuentaPropiaEmpresa.titular,
+						numero: pago.cuentaPropiaEmpresa.numeroCuenta,
+						tipo: pago.cuentaPropiaEmpresa.tipo,
 					}
 				: undefined,
 			voucherFile: pago.voucherFile

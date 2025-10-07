@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Sucursal } from './sucursal.entity';
 import { File } from './file.entity';
+import { Cuenta } from './cuenta.entity';
 
 export enum StatusPago {
 	PENDIENTE = 'pendiente',
@@ -54,6 +55,22 @@ export class Pago {
 	@ManyToOne(() => Sucursal, { nullable: true })
 	@JoinColumn({ name: 'sucursal_id' })
 	sucursal?: Sucursal;
+
+	// Relación con Cuenta Destino (opcional)
+	@Column({ name: 'cuenta_destino_id', nullable: true })
+	cuentaDestinoId?: number;
+
+	@ManyToOne(() => Cuenta, { nullable: true })
+	@JoinColumn({ name: 'cuenta_destino_id' })
+	cuentaDestino?: Cuenta;
+
+	// Relación con Cuenta Propia de Empresa (opcional)
+	@Column({ name: 'cuenta_propia_empresa_id', nullable: true })
+	cuentaPropiaEmpresaId?: number;
+
+	@ManyToOne(() => Cuenta, { nullable: true })
+	@JoinColumn({ name: 'cuenta_propia_empresa_id' })
+	cuentaPropiaEmpresa?: Cuenta;
 
 	// Archivo de voucher (imagen)
 	@Column({ name: 'voucher_file_id', nullable: true })
