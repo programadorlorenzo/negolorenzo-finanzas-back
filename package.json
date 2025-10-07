@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "nest build",
-    "format": "prettier --write \"src/**/*.ts\"",
+    "build:prod": "nest build && cpy package.json dist/ && cpy ecosystem.config.js dist/ ",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"!src/migrations/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
