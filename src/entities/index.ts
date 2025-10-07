@@ -8,3 +8,5 @@ export { RefreshToken } from './refresh-token.entity';
 export { AuditLog, AuditAction } from './audit-log.entity';
 export { UserStatus } from './user.entity';
 export { Cuenta, TipoCuenta, Moneda } from './cuenta.entity';
+export { File } from './file.entity';
+export { Pago, PagoDocument, StatusPago, Moneda as MonedaPago } from './pago.entity';
