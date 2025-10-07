@@ -13,24 +13,24 @@ export class Sucursal {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@ApiProperty({ description: 'Nombre de la sucursal', required: false })
-	@Column({ type: 'varchar', length: 100, nullable: true })
+	@ApiProperty({ description: 'Nombre de la sucursal' })
+	@Column({ type: 'varchar', length: 100, nullable: false })
 	name: string;
 
 	@ApiProperty({ description: 'Código único de la sucursal', required: false })
-	@Column({ type: 'varchar', length: 20, nullable: true })
-	code: string;
+	@Column({ type: 'varchar', length: 20, nullable: true, unique: true })
+	code?: string;
 
 	@ApiProperty({ description: 'Dirección de la sucursal', required: false })
 	@Column({ type: 'text', nullable: true })
-	address: string;
+	address?: string;
 
 	@ApiProperty({ description: 'Teléfono de la sucursal', required: false })
 	@Column({ type: 'varchar', length: 20, nullable: true })
-	phone: string;
+	phone?: string;
 
-	@ApiProperty({ description: 'Estado activo de la sucursal', required: false })
-	@Column({ type: 'boolean', default: true, nullable: true })
+	@ApiProperty({ description: 'Estado activo de la sucursal', default: true })
+	@Column({ type: 'boolean', default: true, nullable: false })
 	isActive: boolean;
 
 	@ApiProperty({ description: 'Fecha de creación', required: false })
