@@ -225,8 +225,8 @@ export class PagoResponseDto {
 	@ApiPropertyOptional()
 	sucursal?: {
 		id: number;
-		nombre: string;
-		codigo?: string;
+		name: string;
+		code?: string;
 	};
 
 	@ApiPropertyOptional({ type: FileResponseDto })

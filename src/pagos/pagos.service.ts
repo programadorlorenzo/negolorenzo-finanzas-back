@@ -235,8 +235,8 @@ export class PagosService {
 			sucursal: pago.sucursal
 				? {
 						id: pago.sucursal.id,
-						nombre: pago.sucursal.name,
-						codigo: pago.sucursal.code,
+						name: pago.sucursal.name,
+						code: pago.sucursal.code,
 					}
 				: undefined,
 			voucherFile: pago.voucherFile
