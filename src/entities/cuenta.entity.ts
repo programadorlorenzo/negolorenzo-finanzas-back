@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from './user.entity';
+import { Sucursal } from './sucursal.entity';
 
 export enum TipoCuenta {
 	AHORROS = 'AHORROS',
@@ -75,6 +76,10 @@ export class Cuenta {
 	@Column({ type: 'integer', nullable: true })
 	createdBy: number;
 
+	@ApiProperty({ description: 'ID de la sucursal (null = cuenta universal)', required: false })
+	@Column({ type: 'integer', nullable: true })
+	sucursalId: number;
+
 	@ApiProperty({ description: 'Fecha de creación', required: false })
 	@CreateDateColumn({ type: 'timestamp with time zone' })
 	createdAt: Date;
@@ -87,4 +92,8 @@ export class Cuenta {
 	@ManyToOne(() => User, { eager: false })
 	@JoinColumn({ name: 'createdBy' })
 	creator: User;
+
+	@ManyToOne(() => Sucursal, { eager: false })
+	@JoinColumn({ name: 'sucursalId' })
+	sucursal: Sucursal;
 }
