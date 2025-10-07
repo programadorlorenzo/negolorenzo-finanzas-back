@@ -76,6 +76,7 @@ export class CuentasService {
 				tipo,
 				banco,
 				esEmpresa,
+				propiaEmpresa,
 				isActive,
 				sucursalId,
 				page = 1,
@@ -83,7 +84,6 @@ export class CuentasService {
 				sortBy = 'createdAt',
 				sortOrder = 'DESC',
 			} = filters;
-
 			const queryBuilder = this.cuentaRepository
 				.createQueryBuilder('cuenta')
 				.leftJoinAndSelect('cuenta.creator', 'creator')
@@ -111,6 +111,10 @@ export class CuentasService {
 
 			if (esEmpresa !== undefined) {
 				queryBuilder.andWhere('cuenta.esEmpresa = :esEmpresa', { esEmpresa });
+			}
+
+			if (propiaEmpresa !== undefined) {
+				queryBuilder.andWhere('cuenta.propiaEmpresa = :propiaEmpresa', { propiaEmpresa });
 			}
 
 			if (isActive !== undefined) {

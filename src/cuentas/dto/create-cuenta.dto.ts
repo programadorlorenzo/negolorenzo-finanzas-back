@@ -103,6 +103,21 @@ export class CreateCuentaDto {
 	esEmpresa?: boolean;
 
 	@ApiProperty({
+		description: 'Indica si es cuenta propia de la empresa',
+		example: false,
+		required: false,
+	})
+	@IsOptional()
+	@IsBoolean({ message: 'propiaEmpresa debe ser un valor booleano' })
+	@Transform(({ value }: { value: unknown }) => {
+		if (typeof value === 'string') {
+			return value.toLowerCase() === 'true';
+		}
+		return Boolean(value);
+	})
+	propiaEmpresa?: boolean;
+
+	@ApiProperty({
 		description: 'Estado activo de la cuenta',
 		example: true,
 		required: false,

@@ -62,6 +62,21 @@ export class FilterCuentasDto {
 	esEmpresa?: boolean;
 
 	@ApiProperty({
+		description: 'Filtrar solo cuentas propias de la empresa',
+		example: false,
+		required: false,
+	})
+	@IsOptional()
+	@IsBoolean()
+	@Transform(({ value }: { value: unknown }) => {
+		if (typeof value === 'string') {
+			return value.toLowerCase() === 'true';
+		}
+		return Boolean(value);
+	})
+	propiaEmpresa?: boolean;
+
+	@ApiProperty({
 		description: 'Filtrar por estado activo',
 		example: true,
 		required: false,
