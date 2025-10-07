@@ -1,0 +1,40 @@
+name: Despliegue automatizado
+on:
+  push:
+    branches:
+      - main
+jobs:
+  despliegue:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Cachear dependencias de npm
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+      - name: Install pnpm
+        run: |
+          npm install -g pnpm
+      - name: Install Dependencias linux
+        run: |
+          sudo apt-get install -y openssh-client rsync sshpass
+      - name: Install Dependencias con pnpm
+        run: |
+          pnpm install
+      - name: Build
+        run: |
+          pnpm run build:prod
+      - name: Copy Deploy Files to HwPeru
+        run: |
+          cd dist  
+          sudo sshpass -p 'nodejs' rsync -r . root@15.235.16.194:/data -e "ssh -p 50006 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+          sudo sshpass -p 'nodejs' ssh -o StrictHostKeyChecking=no root@15.235.16.194 -p 50006 "cd /data && npm i -g pnpm && pnpm i && pm2 restart ecosystem.config.js"
