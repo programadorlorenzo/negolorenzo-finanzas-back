@@ -37,6 +37,6 @@ export const AppDataSource = new DataSource({
 		Cuenta,
 	],
 	migrations: ['src/database/migrations/*{.ts,.js}'],
-	synchronize: false, // Solo para desarrollo, usar migraciones en producción
+	synchronize: true, // Solo para desarrollo, usar migraciones en producción
 	logging: configService.get<string>('NODE_ENV') === 'development',
 });
