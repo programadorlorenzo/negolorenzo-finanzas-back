@@ -174,6 +174,15 @@ export class SeedService {
 	private async assignUsersToSucursales(): Promise<void> {
 		console.log('🔗 Asignando usuarios a sucursales...');
 
+		// Obtener roles
+		const superadminRole = await this.roleRepository.findOne({ where: { name: 'superadmin' } });
+		const adminRole = await this.roleRepository.findOne({ where: { name: 'admin' } });
+		const jefetiendaRole = await this.roleRepository.findOne({ where: { name: 'jefetienda' } });
+
+		if (!superadminRole || !adminRole || !jefetiendaRole) {
+			throw new Error('No se pudieron encontrar todos los roles necesarios');
+		}
+
 		// Obtener usuarios superadmin y admin usando el campo string
 		const superadmins = await this.userRepository.find({ where: { role: 'superadmin' } });
 		const admins = await this.userRepository.find({ where: { role: 'admin' } });
@@ -181,9 +190,8 @@ export class SeedService {
 		// Obtener todas las sucursales
 		const sucursales = await this.sucursalRepository.find();
 
-		// Asignar superadmins y admins a TODAS las sucursales
-		const globalUsers = [...superadmins, ...admins];
-		for (const user of globalUsers) {
+		// Asignar superadmins a TODAS las sucursales con rol superadmin
+		for (const user of superadmins) {
 			for (const sucursal of sucursales) {
 				const existingAssignment = await this.userSucursalRepository.findOne({
 					where: { userId: user.id, sucursalId: sucursal.id },
@@ -193,9 +201,29 @@ export class SeedService {
 					const assignment = this.userSucursalRepository.create({
 						userId: user.id,
 						sucursalId: sucursal.id,
+						roleId: superadminRole.id,
 					});
 					await this.userSucursalRepository.save(assignment);
-					console.log(`   ✓ ${user.email} asignado a sucursal: ${sucursal.name}`);
+					console.log(`   ✓ ${user.email} asignado a sucursal: ${sucursal.name} (superadmin)`);
+				}
+			}
+		}
+
+		// Asignar admins a TODAS las sucursales con rol admin
+		for (const user of admins) {
+			for (const sucursal of sucursales) {
+				const existingAssignment = await this.userSucursalRepository.findOne({
+					where: { userId: user.id, sucursalId: sucursal.id },
+				});
+
+				if (!existingAssignment) {
+					const assignment = this.userSucursalRepository.create({
+						userId: user.id,
+						sucursalId: sucursal.id,
+						roleId: adminRole.id,
+					});
+					await this.userSucursalRepository.save(assignment);
+					console.log(`   ✓ ${user.email} asignado a sucursal: ${sucursal.name} (admin)`);
 				}
 			}
 		}
@@ -223,9 +251,12 @@ export class SeedService {
 					const userSucursal = this.userSucursalRepository.create({
 						userId: user.id,
 						sucursalId: sucursal.id,
+						roleId: jefetiendaRole.id,
 					});
 					await this.userSucursalRepository.save(userSucursal);
-					console.log(`   ✓ Jefe ${user.email} asignado a sucursal específica: ${sucursal.name}`);
+					console.log(
+						`   ✓ Jefe ${user.email} asignado a sucursal específica: ${sucursal.name} (jefetienda)`,
+					);
 				}
 			}
 		}
