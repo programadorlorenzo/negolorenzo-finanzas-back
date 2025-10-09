@@ -412,11 +412,10 @@ export class CuentasService {
 			// Si el usuario no tiene sucursales asignadas, no puede ver ninguna cuenta
 			queryBuilder.andWhere('1 = 0'); // Condición que nunca es verdadera
 		} else {
-			// Filtrar por sucursales del usuario, incluyendo cuentas sin sucursal (universales)
-			queryBuilder.andWhere(
-				'(cuenta.sucursalId IN (:...sucursalIds) OR cuenta.sucursalId IS NULL)',
-				{ sucursalIds },
-			);
+			// Filtrar SOLO por sucursales del usuario (NO incluir cuentas sin sucursal para usuarios regulares)
+			queryBuilder.andWhere('cuenta.sucursalId IN (:...sucursalIds)', {
+				sucursalIds,
+			});
 		}
 	}
 }

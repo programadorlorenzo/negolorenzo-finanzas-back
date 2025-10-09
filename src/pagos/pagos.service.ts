@@ -341,8 +341,8 @@ export class PagosService {
 			// Si el usuario no tiene sucursales asignadas, no puede ver ningún pago
 			queryBuilder.andWhere('1 = 0'); // Condición que nunca es verdadera
 		} else {
-			// Filtrar por sucursales del usuario, incluyendo pagos sin sucursal
-			queryBuilder.andWhere('(pago.sucursalId IN (:...sucursalIds) OR pago.sucursalId IS NULL)', {
+			// Filtrar SOLO por sucursales del usuario (NO incluir pagos sin sucursal para usuarios regulares)
+			queryBuilder.andWhere('pago.sucursalId IN (:...sucursalIds)', {
 				sucursalIds,
 			});
 		}
