@@ -9,6 +9,7 @@ import { CuentasModule } from './cuentas/cuentas.module';
 import { SucursalesModule } from './sucursales/sucursales.module';
 import { FilesModule } from './files/files.module';
 import { PagosModule } from './pagos/pagos.module';
+import { SeedModule } from './database/seed.module';
 import * as entities from './entities';
 
 @Module({
@@ -59,6 +60,7 @@ import * as entities from './entities';
 		SucursalesModule,
 		FilesModule,
 		PagosModule,
+		SeedModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

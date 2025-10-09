@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SeedService } from './seeds/seed.service';
+import { SeedsController } from './seeds/seeds.controller';
 import {
 	User,
 	Sucursal,
@@ -55,6 +56,7 @@ import {
 			Cuenta,
 		]),
 	],
+	controllers: [SeedsController],
 	providers: [SeedService],
 })
 export class SeedModule {}
