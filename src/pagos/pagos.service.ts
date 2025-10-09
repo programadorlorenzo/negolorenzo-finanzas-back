@@ -1,8 +1,9 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder, In } from 'typeorm';
-import { Pago, PagoDocument, File } from '../entities';
+import { Pago, PagoDocument, File, Sucursal } from '../entities';
 import { CreatePagoDto, UpdatePagoDto, PagoFilterDto, PagoResponseDto } from './dto/pago.dto';
+import type { AuthenticatedUser } from '../common/interfaces/user.interface';
 
 @Injectable()
 export class PagosService {
@@ -13,6 +14,8 @@ export class PagosService {
 		private pagoDocumentRepository: Repository<PagoDocument>,
 		@InjectRepository(File)
 		private fileRepository: Repository<File>,
+		@InjectRepository(Sucursal)
+		private sucursalRepository: Repository<Sucursal>,
 	) {}
 
 	async create(createPagoDto: CreatePagoDto): Promise<PagoResponseDto> {
@@ -65,7 +68,10 @@ export class PagosService {
 		return this.findOne(savedPago.id);
 	}
 
-	async findAll(filters: PagoFilterDto): Promise<{
+	async findAll(
+		filters: PagoFilterDto,
+		user: AuthenticatedUser,
+	): Promise<{
 		data: PagoResponseDto[];
 		total: number;
 		page: number;
@@ -75,6 +81,9 @@ export class PagosService {
 		const skip = (page - 1) * limit;
 
 		const queryBuilder = this.createQueryBuilder(filterOptions);
+
+		// Aplicar filtrado por sucursales del usuario
+		await this.applySucursalFilter(queryBuilder, user);
 
 		const [pagos, total] = await queryBuilder.skip(skip).take(limit).getManyAndCount();
 
@@ -306,5 +315,36 @@ export class PagosService {
 			createdAt: pago.createdAt,
 			updatedAt: pago.updatedAt,
 		};
+	}
+
+	/**
+	 * Aplica filtros de sucursal basados en los permisos del usuario
+	 */
+	private async applySucursalFilter(
+		queryBuilder: SelectQueryBuilder<Pago>,
+		user: AuthenticatedUser,
+	): Promise<void> {
+		// Si el usuario es superadmin o admin, puede ver todos los pagos
+		if (user.role === 'SuperAdmin' || user.role === 'Admin') {
+			return;
+		}
+
+		// Obtener IDs de sucursales del usuario
+		const sucursalesDelUsuario = await this.sucursalRepository.find({
+			where: { name: In(user.sucursales) },
+			select: ['id'],
+		});
+
+		const sucursalIds = sucursalesDelUsuario.map(s => s.id);
+
+		if (sucursalIds.length === 0) {
+			// Si el usuario no tiene sucursales asignadas, no puede ver ningún pago
+			queryBuilder.andWhere('1 = 0'); // Condición que nunca es verdadera
+		} else {
+			// Filtrar por sucursales del usuario, incluyendo pagos sin sucursal
+			queryBuilder.andWhere('(pago.sucursalId IN (:...sucursalIds) OR pago.sucursalId IS NULL)', {
+				sucursalIds,
+			});
+		}
 	}
 }

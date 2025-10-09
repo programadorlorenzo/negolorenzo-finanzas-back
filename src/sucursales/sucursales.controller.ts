@@ -20,10 +20,13 @@ import { PaginatedSucursalesResponseDto } from './dto/paginated-sucursales-respo
 import { SucursalSimpleDto } from './dto/sucursal-simple.dto';
 import { Sucursal } from '../entities/sucursal.entity';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { Roles } from '../common/decorators/roles.decorator';
 
 @ApiTags('Sucursales')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('SuperAdmin', 'Admin')
 @Controller('sucursales')
 export class SucursalesController {
 	constructor(private readonly sucursalesService: SucursalesService) {}

@@ -14,6 +14,8 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@ne
 import { PagosService } from './pagos.service';
 import { CreatePagoDto, UpdatePagoDto, PagoFilterDto, PagoResponseDto } from './dto/pago.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { GetUser } from '../common/decorators/get-user.decorator';
+import type { AuthenticatedUser } from '../common/interfaces/user.interface';
 
 @ApiTags('Pagos')
 @Controller('pagos')
@@ -65,8 +67,8 @@ export class PagosController {
 	@ApiQuery({ name: 'fechaHasta', required: false, description: 'Fecha hasta (YYYY-MM-DD)' })
 	@ApiQuery({ name: 'page', required: false, description: 'Número de página', example: 1 })
 	@ApiQuery({ name: 'limit', required: false, description: 'Elementos por página', example: 10 })
-	async findAll(@Query() filters: PagoFilterDto) {
-		return this.pagosService.findAll(filters);
+	async findAll(@Query() filters: PagoFilterDto, @GetUser() user: AuthenticatedUser) {
+		return this.pagosService.findAll(filters, user);
 	}
 
 	@Get(':id')

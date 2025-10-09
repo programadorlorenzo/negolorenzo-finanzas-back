@@ -5,11 +5,12 @@ import {
 	BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, QueryFailedError } from 'typeorm';
-import { Cuenta } from '../entities/cuenta.entity';
+import { Repository, QueryFailedError, In } from 'typeorm';
+import { Cuenta, Sucursal } from '../entities';
 import { CreateCuentaDto } from './dto/create-cuenta.dto';
 import { UpdateCuentaDto } from './dto/update-cuenta.dto';
 import { FilterCuentasDto } from './dto/filter-cuentas.dto';
+import type { AuthenticatedUser } from '../common/interfaces/user.interface';
 
 export interface PaginatedResult<T> {
 	data: T[];
@@ -26,6 +27,8 @@ export class CuentasService {
 	constructor(
 		@InjectRepository(Cuenta)
 		private cuentaRepository: Repository<Cuenta>,
+		@InjectRepository(Sucursal)
+		private sucursalRepository: Repository<Sucursal>,
 	) {}
 
 	async create(createCuentaDto: CreateCuentaDto, userId?: number): Promise<Cuenta> {
@@ -68,7 +71,10 @@ export class CuentasService {
 		}
 	}
 
-	async findAll(filters: FilterCuentasDto = {}): Promise<PaginatedResult<Cuenta>> {
+	async findAll(
+		filters: FilterCuentasDto = {},
+		user?: AuthenticatedUser,
+	): Promise<PaginatedResult<Cuenta>> {
 		try {
 			const {
 				search,
@@ -88,6 +94,11 @@ export class CuentasService {
 				.createQueryBuilder('cuenta')
 				.leftJoinAndSelect('cuenta.creator', 'creator')
 				.leftJoinAndSelect('cuenta.sucursal', 'sucursal');
+
+			// Aplicar filtrado por sucursales del usuario
+			if (user) {
+				await this.applySucursalFilter(queryBuilder, user);
+			}
 
 			// Aplicar filtros de búsqueda
 			if (search) {
@@ -374,6 +385,38 @@ export class CuentasService {
 			});
 		} catch {
 			throw new BadRequestException('Error al buscar la cuenta por CCI');
+		}
+	}
+
+	/**
+	 * Aplica filtros de sucursal basados en los permisos del usuario
+	 */
+	private async applySucursalFilter(
+		queryBuilder: import('typeorm').SelectQueryBuilder<Cuenta>,
+		user: AuthenticatedUser,
+	): Promise<void> {
+		// Si el usuario es superadmin o admin, puede ver todas las cuentas
+		if (user.role === 'SuperAdmin' || user.role === 'Admin') {
+			return;
+		}
+
+		// Obtener IDs de sucursales del usuario
+		const sucursalesDelUsuario = await this.sucursalRepository.find({
+			where: { name: In(user.sucursales) },
+			select: ['id'],
+		});
+
+		const sucursalIds = sucursalesDelUsuario.map(s => s.id);
+
+		if (sucursalIds.length === 0) {
+			// Si el usuario no tiene sucursales asignadas, no puede ver ninguna cuenta
+			queryBuilder.andWhere('1 = 0'); // Condición que nunca es verdadera
+		} else {
+			// Filtrar por sucursales del usuario, incluyendo cuentas sin sucursal (universales)
+			queryBuilder.andWhere(
+				'(cuenta.sucursalId IN (:...sucursalIds) OR cuenta.sucursalId IS NULL)',
+				{ sucursalIds },
+			);
 		}
 	}
 }

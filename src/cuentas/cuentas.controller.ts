@@ -19,6 +19,8 @@ import { FilterCuentasDto } from './dto/filter-cuentas.dto';
 import { PaginatedCuentasResponseDto } from './dto/paginated-cuentas-response.dto';
 import { Cuenta } from '../entities/cuenta.entity';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { GetUser } from '../common/decorators/get-user.decorator';
+import type { AuthenticatedUser } from '../common/interfaces/user.interface';
 
 @ApiTags('Cuentas')
 @Controller('cuentas')
@@ -26,14 +28,16 @@ export class CuentasController {
 	constructor(private readonly cuentasService: CuentasService) {}
 
 	@Get()
+	@UseGuards(JwtAuthGuard)
+	@ApiBearerAuth()
 	@ApiOperation({ summary: 'Obtener todas las cuentas con filtros y paginación' })
 	@ApiResponse({
 		status: 200,
 		description: 'Lista de cuentas obtenida exitosamente',
 		type: PaginatedCuentasResponseDto,
 	})
-	findAll(@Query() filters: FilterCuentasDto) {
-		return this.cuentasService.findAll(filters);
+	findAll(@Query() filters: FilterCuentasDto, @GetUser() user: AuthenticatedUser) {
+		return this.cuentasService.findAll(filters, user);
 	}
 
 	@Get(':id')
