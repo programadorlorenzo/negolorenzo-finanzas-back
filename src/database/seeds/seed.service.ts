@@ -265,5 +265,31 @@ export class SeedService {
 		console.log(`   - Superadmins y Admins: acceso a ${sucursales.length} sucursales`);
 		console.log(`   - Jefes de tienda: acceso a 1 sucursal específica cada uno`);
 		console.log('📝 IMPORTANTE: Todos los usuarios tienen contraseña temporal "123456"');
+
+		// Verificar asignaciones creadas
+		await this.verifyAssignments();
+	}
+
+	private async verifyAssignments(): Promise<void> {
+		console.log('🔍 Verificando asignaciones creadas...');
+
+		const totalAssignments = await this.userSucursalRepository.count();
+		console.log(`   - Total de asignaciones en BD: ${totalAssignments}`);
+
+		// Verificar algunos usuarios específicos
+		const testUsers = ['sistemas@negolorenzo.pe', 'tamayo@negolorenzo.pe'];
+
+		for (const email of testUsers) {
+			const user = await this.userRepository.findOne({
+				where: { email },
+				relations: ['userSucursales', 'userSucursales.sucursal'],
+			});
+
+			if (user) {
+				const sucursalesCount = user.userSucursales?.length || 0;
+				const sucursalesNames = user.userSucursales?.map(us => us.sucursal.name) || [];
+				console.log(`   - ${email}: ${sucursalesCount} sucursales [${sucursalesNames.join(', ')}]`);
+			}
+		}
 	}
 }

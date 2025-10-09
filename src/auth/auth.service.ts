@@ -1,10 +1,4 @@
-import {
-	Injectable,
-	UnauthorizedException,
-	ConflictException,
-	NotFoundException,
-	BadRequestException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -61,6 +55,7 @@ export class AuthService {
 	async login(loginDto: LoginDto): Promise<LoginResponse> {
 		const user = await this.userRepository.findOne({
 			where: { email: loginDto.email },
+			relations: ['userSucursales', 'userSucursales.sucursal'],
 		});
 
 		if (!user || !(await argon2.verify(user.password, loginDto.password))) {
@@ -71,11 +66,14 @@ export class AuthService {
 			throw new UnauthorizedException('Account is not active');
 		}
 
+		// Extraer nombres de sucursales de la relación
+		const sucursalesNames = user.userSucursales?.map(us => us.sucursal.name) || [];
+
 		const payload: JwtPayload = {
 			sub: user.id,
 			email: user.email,
 			role: user.role || 'User',
-			sucursales: user.sucursales || [],
+			sucursales: sucursalesNames,
 			permissions: user.permissions || [],
 		};
 
@@ -147,6 +145,10 @@ export class AuthService {
 	}
 
 	private buildUserResponse(user: User): UserResponse {
+		// Extraer nombres de sucursales de la relación si están disponibles
+		const sucursalesNames =
+			user.userSucursales?.map(us => us.sucursal.name) || user.sucursales || [];
+
 		return {
 			id: user.id,
 			firstName: user.firstName,
@@ -154,7 +156,7 @@ export class AuthService {
 			email: user.email,
 			status: user.status,
 			role: user.role || 'User',
-			sucursales: user.sucursales || [],
+			sucursales: sucursalesNames,
 			permissions: user.permissions || [],
 		};
 	}
@@ -168,6 +170,7 @@ export class AuthService {
 	async validateUser(payload: JwtPayload): Promise<User> {
 		const user = await this.userRepository.findOne({
 			where: { id: payload.sub },
+			relations: ['userSucursales', 'userSucursales.sucursal'],
 		});
 
 		if (!user || user.status !== UserStatus.ACTIVE) {

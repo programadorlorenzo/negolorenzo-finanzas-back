@@ -4,8 +4,10 @@ import {
 	Column,
 	CreateDateColumn,
 	UpdateDateColumn,
+	OneToMany,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
+import { UserSucursal } from './user-sucursal.entity';
 
 export enum UserStatus {
 	ACTIVE = 'active',
@@ -61,4 +63,8 @@ export class User {
 	@ApiProperty({ description: 'Fecha de actualización', required: false })
 	@UpdateDateColumn({ type: 'timestamp with time zone' })
 	updatedAt: Date;
+
+	// Relación con UserSucursal
+	@OneToMany(() => UserSucursal, userSucursal => userSucursal.user)
+	userSucursales: UserSucursal[];
 }
