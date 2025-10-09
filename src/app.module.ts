@@ -40,7 +40,7 @@ import * as entities from './entities';
 					entities.Pago,
 					entities.PagoDocument,
 				],
-				synchronize: configService.get('NODE_ENV') === 'development',
+				synchronize: true, // TEMPORAL: Para crear tablas en producción
 				logging: configService.get('NODE_ENV') === 'development',
 			}),
 			inject: [ConfigService],
