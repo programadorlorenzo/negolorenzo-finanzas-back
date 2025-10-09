@@ -6,9 +6,17 @@ import { AppModule } from './app.module';
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 
+	// CORS dinámico basado en entorno
+	const corsOrigins =
+		process.env.NODE_ENV === 'production'
+			? ['https://finanzas.negolorenzo.pe', 'https://back-finanzas.negolorenzo.pe']
+			: ['http://localhost:3000', 'http://localhost:3001'];
+
+	console.log('🌐 CORS configured for origins:', corsOrigins);
+
 	// Enable CORS
 	app.enableCors({
-		origin: ['http://localhost:3000', 'http://localhost:3001'],
+		origin: corsOrigins,
 		methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
 		allowedHeaders: ['Content-Type', 'Authorization'],
 		credentials: true,
