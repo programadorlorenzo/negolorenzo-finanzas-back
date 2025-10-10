@@ -12,9 +12,17 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { PagosService } from './pagos.service';
-import { CreatePagoDto, UpdatePagoDto, PagoFilterDto, PagoResponseDto } from './dto/pago.dto';
+import {
+	CreatePagoDto,
+	UpdatePagoDto,
+	PagoFilterDto,
+	PagoResponseDto,
+	ChangeStatusPagoDto,
+} from './dto/pago.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { GetUser } from '../common/decorators/get-user.decorator';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { Roles } from '../common/decorators/roles.decorator';
 import type { AuthenticatedUser } from '../common/interfaces/user.interface';
 
 @ApiTags('Pagos')
@@ -103,6 +111,31 @@ export class PagosController {
 	})
 	async update(@Param('id', ParseIntPipe) id: number, @Body() updatePagoDto: UpdatePagoDto) {
 		return this.pagosService.update(id, updatePagoDto);
+	}
+
+	@Patch(':id/status')
+	@UseGuards(RolesGuard)
+	@Roles('superadmin', 'admin')
+	@ApiOperation({ summary: 'Cambiar estado del pago (Solo Admin/SuperAdmin)' })
+	@ApiResponse({
+		status: 200,
+		description: 'Estado del pago actualizado exitosamente',
+		type: PagoResponseDto,
+	})
+	@ApiResponse({
+		status: 403,
+		description: 'No tienes permisos para cambiar el estado',
+	})
+	@ApiResponse({
+		status: 404,
+		description: 'Pago no encontrado',
+	})
+	async changeStatus(
+		@Param('id', ParseIntPipe) id: number,
+		@Body() changeStatusDto: ChangeStatusPagoDto,
+		@GetUser() user: AuthenticatedUser,
+	) {
+		return await this.pagosService.changeStatus(id, changeStatusDto.status, user);
 	}
 
 	@Delete(':id')

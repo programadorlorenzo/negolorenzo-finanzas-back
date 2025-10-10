@@ -101,10 +101,7 @@ export class UpdatePagoDto {
 	@IsEnum(Moneda)
 	moneda?: Moneda;
 
-	@ApiPropertyOptional({ enum: StatusPago, description: 'Estado del pago' })
-	@IsOptional()
-	@IsEnum(StatusPago)
-	status?: StatusPago;
+	// Campo status removido - usar endpoint específico /status para cambiar estado
 
 	@ApiPropertyOptional({ description: 'ID de la sucursal (opcional)' })
 	@IsOptional()
@@ -139,6 +136,13 @@ export class UpdatePagoDto {
 	@IsNumber({}, { each: true })
 	@Type(() => Number)
 	documentFileIds?: number[];
+}
+
+// DTO específico para cambio de estado (solo Admin/SuperAdmin)
+export class ChangeStatusPagoDto {
+	@ApiProperty({ enum: StatusPago, description: 'Nuevo estado del pago' })
+	@IsEnum(StatusPago)
+	status: StatusPago;
 }
 
 export class PagoFilterDto {

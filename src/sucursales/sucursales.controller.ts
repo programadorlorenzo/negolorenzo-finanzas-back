@@ -26,7 +26,7 @@ import { Roles } from '../common/decorators/roles.decorator';
 @ApiTags('Sucursales')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('SuperAdmin', 'Admin')
+@Roles('superadmin', 'admin')
 @Controller('sucursales')
 export class SucursalesController {
 	constructor(private readonly sucursalesService: SucursalesService) {}

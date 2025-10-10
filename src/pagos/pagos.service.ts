@@ -4,6 +4,7 @@ import { Repository, SelectQueryBuilder, In } from 'typeorm';
 import { Pago, PagoDocument, File, Sucursal } from '../entities';
 import { CreatePagoDto, UpdatePagoDto, PagoFilterDto, PagoResponseDto } from './dto/pago.dto';
 import type { AuthenticatedUser } from '../common/interfaces/user.interface';
+import { StatusPago } from '../entities';
 
 @Injectable()
 export class PagosService {
@@ -137,14 +138,14 @@ export class PagosService {
 			}
 		}
 
-		// Actualizar campos básicos
+		// Actualizar campos básicos (status excluido - usar endpoint específico)
 		Object.assign(pago, {
 			descripcion: updatePagoDto.descripcion ?? pago.descripcion,
 			justificacion: updatePagoDto.justificacion ?? pago.justificacion,
 			coordinadoCon: updatePagoDto.coordinadoCon ?? pago.coordinadoCon,
 			total: updatePagoDto.total ?? pago.total,
 			moneda: updatePagoDto.moneda ?? pago.moneda,
-			status: updatePagoDto.status ?? pago.status,
+			// status: campo removido - usar /status endpoint
 			sucursalId: updatePagoDto.sucursalId ?? pago.sucursalId,
 			cuentaDestinoId: updatePagoDto.cuentaDestinoId ?? pago.cuentaDestinoId,
 			cuentaPropiaEmpresaId: updatePagoDto.cuentaPropiaEmpresaId ?? pago.cuentaPropiaEmpresaId,
@@ -176,6 +177,27 @@ export class PagosService {
 				await this.pagoDocumentRepository.save(pagoDocuments);
 			}
 		}
+
+		return this.findOne(id);
+	}
+
+	async changeStatus(
+		id: number,
+		newStatus: StatusPago,
+		user: AuthenticatedUser,
+	): Promise<PagoResponseDto> {
+		const pago = await this.pagoRepository.findOne({ where: { id } });
+		if (!pago) {
+			throw new NotFoundException('Pago no encontrado');
+		}
+
+		console.log(
+			`🔄 [PAGOS] Usuario ${user.email} (${user.role}) cambiando estado de pago ${id} a ${newStatus}`,
+		);
+
+		// Actualizar solo el estado
+		pago.status = newStatus;
+		await this.pagoRepository.save(pago);
 
 		return this.findOne(id);
 	}
