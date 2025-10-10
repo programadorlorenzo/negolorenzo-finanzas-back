@@ -325,7 +325,7 @@ export class PagosService {
 		user: AuthenticatedUser,
 	): Promise<void> {
 		// Si el usuario es superadmin o admin, puede ver todos los pagos
-		if (user.role === 'SuperAdmin' || user.role === 'Admin') {
+		if (user.role === 'superadmin' || user.role === 'admin') {
 			return;
 		}
 
