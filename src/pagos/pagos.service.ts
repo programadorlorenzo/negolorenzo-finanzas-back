@@ -299,18 +299,24 @@ export class PagosService {
 			cuentaDestino: pago.cuentaDestino
 				? {
 						id: pago.cuentaDestino.id,
-						nombre: pago.cuentaDestino.titular,
-						numero: pago.cuentaDestino.numeroCuenta,
+						titular: pago.cuentaDestino.titular,
+						numeroCuenta: pago.cuentaDestino.numeroCuenta,
 						tipo: pago.cuentaDestino.tipo,
+						banco: pago.cuentaDestino.banco,
+						cci: pago.cuentaDestino.cci,
+						moneda: pago.cuentaDestino.moneda,
 					}
 				: undefined,
 			cuentaPropiaEmpresaId: pago.cuentaPropiaEmpresaId,
 			cuentaPropiaEmpresa: pago.cuentaPropiaEmpresa
 				? {
 						id: pago.cuentaPropiaEmpresa.id,
-						nombre: pago.cuentaPropiaEmpresa.titular,
-						numero: pago.cuentaPropiaEmpresa.numeroCuenta,
+						titular: pago.cuentaPropiaEmpresa.titular,
+						numeroCuenta: pago.cuentaPropiaEmpresa.numeroCuenta,
 						tipo: pago.cuentaPropiaEmpresa.tipo,
+						banco: pago.cuentaPropiaEmpresa.banco,
+						cci: pago.cuentaPropiaEmpresa.cci,
+						moneda: pago.cuentaPropiaEmpresa.moneda,
 					}
 				: undefined,
 			voucherFile: pago.voucherFile

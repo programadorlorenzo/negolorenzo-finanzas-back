@@ -275,9 +275,12 @@ export class PagoResponseDto {
 	@ApiPropertyOptional()
 	cuentaDestino?: {
 		id: number;
-		nombre: string;
-		numero: string;
+		titular: string;
+		numeroCuenta: string;
 		tipo: string;
+		banco?: string;
+		cci?: string;
+		moneda?: string;
 	};
 
 	@ApiPropertyOptional()
@@ -286,9 +289,12 @@ export class PagoResponseDto {
 	@ApiPropertyOptional()
 	cuentaPropiaEmpresa?: {
 		id: number;
-		nombre: string;
-		numero: string;
+		titular: string;
+		numeroCuenta: string;
 		tipo: string;
+		banco?: string;
+		cci?: string;
+		moneda?: string;
 	};
 
 	@ApiPropertyOptional({ type: FileResponseDto })
